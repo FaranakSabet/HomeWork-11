@@ -16,28 +16,40 @@ app.get("/notes", function (req, res) {
 app.get("/api/notes", function (req, res) {
   res.sendFile(path.join(__dirname, "/db/db.json"));
 });
-app.get("/api/notes/:id", function (err, res) {
+app.get("/api/notes/:id", function (req, res) {
   notes = JSON.parse(
-    fs.readFile(path.join(__dirnamem, "/db/db.json"), "utf8"),
-    function (err, data) {
-      if (err) throw err;
-    }
+    fs.readFileSync(path.join(__dirname, "/db/db.json"), "utf8")
+    // function (err, data) {
+    //   if (err) throw err;
+    // }
   );
-  res.json(notes[Number(req.params.id)]);
+  console.log("notes", notes);
+
+  const note = notes.find((note) => note.id === Number(req.params.id));
+
+  if (note != null) {
+    res.json(note);
+  } else {
+    res.sendStatus(404).render("Not found");
+  }
 });
+
 app.get("*", function (req, res) {
   res.send(path.join(__dirname, "/public/index.html"));
 });
 
+//  CREATE NEW NOTE
+
 app.post("/api/notes", function (req, res) {
   notes = JSON.parse(
-    fs.readFileSunc(path.join(__dirname, "/db/db.json"), "utf8")
+    fs.readFileSync(path.join(__dirname, "/db/db.json"), "utf8")
   );
   newNote = req.body;
+  console.log("new note", req.body);
   // req.body.id = notes.length +1;
-  arrayId = notes.length.toString();
-  newNote.id = arrayId;
+  newNote.id = notes.length + 1;
   notes.push(newNote);
+
   fs.writeFileSync(
     path.join(__dirname, "/db/db.json"),
     JSON.stringify(notes),
@@ -47,6 +59,26 @@ app.post("/api/notes", function (req, res) {
     }
   );
   res.json(notes);
+});
+
+// Update Note Information
+app.post("/api/notes/:id", function (req, res) {
+  notes = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "/db/db.json"), "utf8")
+  );
+
+  let i = notes.findIndex((note) => note.id === Number(req.params.id));
+
+  if (i != null) {
+    notes[i].title = req.body.title;
+    notes[i].text = req.body.text;
+
+    updateNotesDB(notes);
+
+    res.json(notes);
+  } else {
+    res.status(404).render("Note not found");
+  }
 });
 
 app.delete("/api/notes/:id", function (req, res) {
@@ -59,7 +91,18 @@ app.delete("/api/notes/:id", function (req, res) {
     return selectNote.id != noteId;
   });
 
-  fs.writFileSync(
+  console.log(notes);
+  updateNotesDB(notes);
+
+  res.json(notes);
+});
+
+app.listen(PORT, () => {
+  console.log(`SERVER IS LISTENING port: ${PORT}`);
+});
+
+function updateNotesDB(notes) {
+  fs.writeFileSync(
     path.join(__dirname, "/db/db.json"),
     JSON.stringify(notes),
     "utf8",
@@ -67,9 +110,4 @@ app.delete("/api/notes/:id", function (req, res) {
       if (err) throw err;
     }
   );
-  res.json(notes);
-});
-
-app.listen(PORT, () => {
-  console.log(`SERVER ISLISTENING port:{PORT}`);
-});
+}
