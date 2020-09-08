@@ -1,1 +1,6 @@
-[{"id":1,"title":"pay rent","text":"do not forget to pay the rent"},{"title":"a changed note","text":"something else","id":2},{"title":"pay rent","text":"do not forget to pay the rent","id":3},{"title":"a changed note","text":"something elsefdsfdsfds","id":4}]
+[
+  { "id": 1, "title": "pay rent", "text": "do not forget to pay the rent" },
+  { "title": "a changed note", "text": "something else", "id": 2 },
+  { "title": "pay rent", "text": "do not forget to pay the rent", "id": 3 },
+  { "title": "a changed note", "text": "something elsefdsfdsfds", "id": 4 }
+]
