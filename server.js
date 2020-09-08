@@ -19,10 +19,8 @@ app.get("/api/notes", function (req, res) {
 app.get("/api/notes/:id", function (req, res) {
   notes = JSON.parse(
     fs.readFileSync(path.join(__dirname, "/db/db.json"), "utf8")
-    // function (err, data) {
-    //   if (err) throw err;
-    // }
   );
+
   console.log("notes", notes);
 
   const note = notes.find((note) => note.id === Number(req.params.id));
@@ -46,7 +44,6 @@ app.post("/api/notes", function (req, res) {
   );
   newNote = req.body;
   console.log("new note", req.body);
-  // req.body.id = notes.length +1;
   newNote.id = notes.length + 1;
   notes.push(newNote);
 
